@@ -14,7 +14,10 @@ def project_point(p, f):
                   [0, 0, 1./f, 0]])
 
     p2 = np.hstack((p, np.array([[1]])))
+    print p2
+    print p2.T
     res = np.dot(H, p2.T)
+    print res
     return res[0, 0] / res[2, 0], res[1, 0] / res[2, 0]
 
 # Test: Given point and focal length (units: mm)

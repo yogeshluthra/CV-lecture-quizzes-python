@@ -6,6 +6,8 @@ from mpl_toolkits.mplot3d import Axes3D
 # Helper functions
 def normalize_image(image):
     """normalize the image between 0-255 and setting data type=uint8"""
+    print type(image)
+    print image.shape
     minImg, maxImg = np.min(image)*1., np.max(image)*1.
     return (((image - minImg)/(maxImg-minImg))*255).astype(np.uint8)
 

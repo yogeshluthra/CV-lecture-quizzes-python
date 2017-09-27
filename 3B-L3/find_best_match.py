@@ -1,12 +1,32 @@
 import cv2
 import numpy as np
 
+def find_matched_template(patch, image, show=False):
+    """returns top left of matched template w.r.t. coordinates in image"""
+    assert patch.ndim == 2 and image.ndim == 2
+    h, w = patch.shape
+    H, W = image.shape
+    image_flt32 = image.astype(np.float32)
+    patch_flt32 = patch.astype(np.float32)
+    normedCorrelation = cv2.matchTemplate(image_flt32, patch_flt32, method=cv2.TM_CCOEFF_NORMED)
+    minVal, maxVal, minLoc, maxLoc = cv2.minMaxLoc(normedCorrelation)
+
+    if show:
+        cv2.imshow('normedCorrelation', normedCorrelation)
+        matchedCenterLoc = (maxLoc[0] + w / 2, maxLoc[1] + h / 2)
+        cv2.circle(image_flt32, matchedCenterLoc, 4, (255, 0, 0), -1)
+        pt1 = maxLoc
+        pt2 = (maxLoc[0] + w, maxLoc[1] + h)
+        cv2.rectangle(image_flt32, pt1, pt2, (255, 0, 0), 2)
+        cv2.imshow('matched Template', image_flt32)
+
+    return maxLoc
 
 # Find best match
-def find_best_match(patch, strip):
-    # TODO: Find patch in strip and return column index (x value) of topleft corner
-    pass
-
+def find_best_match(patch, strip, show=False):
+    """returns only the x location where template matches strip"""
+    matchedLoc = find_matched_template(patch, strip, show=False)
+    return matchedLoc[0]
 # Test code:
 
 # Load images
@@ -40,3 +60,4 @@ patch_right = right_gray[patch_loc[0]: patch_loc[0] + patch_size[0],
                          best_x: best_x + patch_size[1]]
 
 cv2.waitKey(0)
+cv2.destroyAllWindows()

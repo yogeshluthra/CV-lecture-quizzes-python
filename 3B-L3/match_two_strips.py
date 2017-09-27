@@ -5,10 +5,33 @@ import matplotlib.pyplot as plt
 
 # We will use the function implemented in the last quiz
 # Find best match
-def find_best_match(patch, strip):
-    # TODO: Find patch in strip and return column index (x value) of topleft corner
-    # Paste your answer from the previous quiz here
-    pass
+def find_matched_template(patch, image, show=False):
+    """returns top left of matched template w.r.t. coordinates in image"""
+    assert patch.ndim == 2 and image.ndim == 2
+    h, w = patch.shape
+    H, W = image.shape
+    image_flt32 = image.astype(np.float32)
+    patch_flt32 = patch.astype(np.float32)
+    normedCorrelation = cv2.matchTemplate(image_flt32, patch_flt32, method=cv2.TM_CCOEFF_NORMED)
+    minVal, maxVal, minLoc, maxLoc = cv2.minMaxLoc(normedCorrelation)
+
+    if show:
+        cv2.imshow('normedCorrelation', normedCorrelation)
+        matchedCenterLoc = (maxLoc[0] + w / 2, maxLoc[1] + h / 2)
+        cv2.circle(image_flt32, matchedCenterLoc, 4, (255, 0, 0), -1)
+        pt1 = maxLoc
+        pt2 = (maxLoc[0] + w, maxLoc[1] + h)
+        cv2.rectangle(image_flt32, pt1, pt2, (255, 0, 0), 2)
+        cv2.imshow('matched Template', image_flt32)
+
+    return maxLoc
+
+# Find best match
+def find_best_match(patch, strip, show=False):
+    """returns only the x location where template matches strip"""
+    matchedLoc = find_matched_template(patch, strip, show=False)
+    return matchedLoc[0]
+# Test code:
 
 
 def match_strips(strip_left, strip_right, b):
@@ -16,7 +39,14 @@ def match_strips(strip_left, strip_right, b):
     # find the best matching position (along X-axis) in the right strip.
     # Return a vector of disparities (left X-position - right X-position).
     # Note: Only consider whole blocks that fit within image bounds.
-    pass
+    Nblocks = strip_left.shape[1]//b
+    disparities=[]
+    for xIndex_leftBlock in range(Nblocks):
+        patch = strip_left[:, (xIndex_leftBlock)*b:(xIndex_leftBlock+1)*b]
+        x_bestMatch = find_best_match(patch, strip_right)
+        disparity = xIndex_leftBlock*b-x_bestMatch
+        disparities.append(disparity)
+    return np.asarray(disparities)[None,:]
 
 # Test code:
 

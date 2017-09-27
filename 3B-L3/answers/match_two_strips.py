@@ -52,7 +52,7 @@ right_gray = cv2.cvtColor(right, cv2.COLOR_BGR2GRAY) / 255.
 
 # Define strip row (y) and square block size (b)
 y = 94  # Adapted to mimic quiz results
-b = 80
+b = 100
 
 # Extract strip from left image
 strip_left = left_gray[y: y + b, :]

@@ -8,8 +8,12 @@ import numpy as np
 
 
 def project_point(p, f):
-    # TODO: Define and apply projection matrix
-    pass
+    projection_matrix = np.array([[f,0,0,0],
+                                [0,f,0,0],
+                                [0,0,1,0]]).astype(float)
+    p = np.hstack((p,[[1]])).T
+    linear_trans = projection_matrix.dot(p)
+    return linear_trans[:-1,0]/linear_trans[-1,0]
 
 # Test: Given point and focal length (units: mm)
 p = np.array([[200, 100, 120]])

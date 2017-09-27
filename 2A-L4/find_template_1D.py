@@ -3,14 +3,16 @@ import scipy.signal as sp
 
 
 def find_template_1D(t, s):
-    # TODO: Locate template t in signal s and return index. Use scipy.signal.correlate2d
-    pass
+    corr1d=np.zeros(s.size-t.size+1)
+    for i in range(corr1d.size):
+        corr1d[i]=np.sum(t[:]*s[i:i+t.size])
+    return np.argmax(corr1d)
 
-s = np.array([[-1, 0, 0, 5, 1, 1, 0, 0, -1, -7, 2, 1, 0, 0, -1]])
-t = np.array([[-1, -7, 2]])
+s = np.array([-1, 0, 0, 5, 1, 1, 0, 0, -1, -7, 2, 1, 0, 0, -1])
+t = np.array([-1, -7, 2])
 
-print "Signal: \n {} \n {}".format(np.array(range(s.shape[1])), s[0])
-print "Tiemplate: \n {} \n {}".format(np.array(range(t.shape[1])), t[0])
+print "Signal: \n {} \n {}".format(np.array(range(s.size)), s)
+print "Template: \n {} \n {}".format(np.array(range(t.size)), t)
 
 index = find_template_1D(t, s)
 print "Index: {}".format(index)
